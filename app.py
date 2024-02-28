@@ -36,7 +36,7 @@ class InferlessPythonModel:
         result_output = [output.outputs[0].text for output in result]
 
         # Return a dictionary containing the result
-        return {'end_time':end_time,'result': result_output[0]}
+        return {'generated_result': result_output[0]}
 
     def finalize(self):
         pass
