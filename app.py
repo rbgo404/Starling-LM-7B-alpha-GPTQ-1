@@ -1,29 +1,42 @@
-import json
-import numpy as np
-import torch
-from transformers import AutoTokenizer
-from auto_gptq import AutoGPTQForCausalLM
-import base64
-from io import BytesIO
-
+from vllm import LLM, SamplingParams
+from huggingface_hub import snapshot_download
+from pathlib import Path
+import time
 class InferlessPythonModel:
-  def initialize(self):
-      self.tokenizer = AutoTokenizer.from_pretrained("TheBloke/Starling-LM-7B-alpha-GPTQ", use_fast=True)
-      self.model = AutoGPTQForCausalLM.from_quantized(
-        "TheBloke/Starling-LM-7B-alpha-GPTQ",
-        use_safetensors=True,
-        device="cuda:0",
-        quantize_config=None,
-        inject_fused_attention=False
-      )
+    def initialize(self):
+        repo_id = "TheBloke/Starling-LM-7B-alpha-GPTQ"  # Specify the model repository ID
+        # HF_TOKEN = os.getenv("HF_TOKEN")  # Access Hugging Face token from environment variable
+        # volume_nfs = "/var/nfs-mount/common_llm"  # Define model storage location
+        model_dir = f"{volume_nfs}/{repo_id}"  # Construct model directory path
+        model_dir_path = Path(model_dir)  # Convert path to Path object
 
-  def infer(self, inputs):
-    prompt = inputs["prompt"]
-    input_ids = self.tokenizer(prompt, return_tensors='pt').input_ids.cuda()
-    output = self.model.generate(inputs=input_ids, temperature=0.7, max_new_tokens=200)
-    result = self.tokenizer.decode(output[0])
-    return {"generated_result": result}
+        # Create the model directory if it doesn't exist
+        if not model_dir_path.exists():
+            model_dir_path.mkdir(exist_ok=True, parents=True)
 
-  def finalize(self,args):
-    self.tokenizer = None
-    self.model = None
+        # Download the model snapshot from Hugging Face Hub
+        snapshot_download(
+            repo_id,
+            local_dir=model_dir
+            # token=HF_TOKEN  # Provide token if necessary
+        )
+
+        # Define sampling parameters for model generation
+        self.sampling_params = SamplingParams(temperature=0.7, top_p=0.95, max_tokens=200)
+
+        # Initialize the LLM object
+        self.llm = LLM(model=model_dir,quantization="gptq",dtype="float16")
+        
+    def infer(self,inputs):
+        prompts = inputs["prompt"]  # Extract the prompt from the input
+        init_time = time.perf_counter()
+        result = self.llm.generate(prompts, self.sampling_params)
+        end_time = time.perf_counter() - init_time
+        # Extract the generated text from the result
+        result_output = [output.outputs[0].text for output in result]
+
+        # Return a dictionary containing the result
+        return {'end_time':end_time,'result': result_output[0]}
+
+    def finalize(self):
+        pass
