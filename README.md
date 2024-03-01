@@ -1,8 +1,8 @@
 # Starling-LM-7B-alpha-GPTQ with vLLM
 Starling-7B, an open large language model (LLM) trained by Reinforcement Learning from AI Feedback (RLAIF). The model harnesses the power of our new GPT-4 labeled ranking dataset, berkeley-nest/Nectar, and our new reward training and policy tuning pipeline.
 
-## Deploy Starling-LM-7B-alpha-GPTQ using Inferless:
-- Deployment of Llama-2-7B model using [vLLM](https://github.com/vllm-project/vllm).
+## Deploy Starling-7B using Inferless:
+- Deployment of Starling-7B model using [vLLM](https://github.com/vllm-project/vllm).
 - By using the vLLM, you can expect an average latency of 1.07 sec.
 
 ---
