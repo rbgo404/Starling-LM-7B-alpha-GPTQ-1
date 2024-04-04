@@ -9,7 +9,7 @@ class InferlessPythonModel:
         self.sampling_params = SamplingParams(temperature=0.7, top_p=0.95, max_tokens=200)
 
         # Initialize the LLM object
-        self.llm = LLM(model=model_id,quantization="gptq")
+        self.llm = LLM(model=model_id,quantization="gptq",dtype="float16")
         
     def infer(self,inputs):
         prompts = inputs["prompt"]  # Extract the prompt from the input
