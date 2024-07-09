@@ -3,7 +3,7 @@ Starling-7B, an open large language model (LLM) trained by Reinforcement Learnin
 
 ## Deploy Starling-7B using Inferless:
 - Deployment of Starling-7B model using [vLLM](https://github.com/vllm-project/vllm).
-- By using the vLLM, you can expect an average latency of 1.07 sec.
+- By using the vLLM, you can expect an average latency of `1.07 sec`.
 
 ---
 ## Prerequisites
@@ -24,9 +24,6 @@ This will create a copy of the repository in your own GitHub account, allowing y
 To access the custom runtime window in Inferless, simply navigate to the sidebar and click on the **Create new Runtime** button. A pop-up will appear.
 
 Next, provide a suitable name for your custom runtime and proceed by uploading the **inferless-runtime-config.yaml** file given above. Finally, ensure you save your changes by clicking on the save button.
-
-### Add Your Hugging Face Access Token
-Go into the `inferless.yaml` and replace `<hugging_face_token>` with your hugging face access token. Make sure to check the repo is private to protect your hugging face token.
 
 ### Import the Model in Inferless
 Log in to your inferless account, select the workspace you want the model to be imported into and click the Add Model button.
